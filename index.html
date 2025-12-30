@@ -11,29 +11,27 @@
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;800&display=swap');
         body {
             font-family: 'Pretendard', sans-serif;
-            background-color: #020617;
-            color: #f1f5f9;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3%3E");
-            background-blend-mode: overlay;
+            background-color: #fcfaf7; /* 눈이 편한 은은한 미색 */
+            color: #1e293b;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3%3E");
+            background-blend-mode: multiply;
+            opacity: 0.98;
         }
         .neon-text {
-            text-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+            text-shadow: 2px 2px 4px rgba(220, 38, 38, 0.1);
         }
         .hongkong-card {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .mag-label {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
         }
         @keyframes pulse-slow {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
         }
         .animate-pulse-slow {
-            animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            animation: pulse-slow 5s ease-in-out infinite;
         }
     </style>
 <script type="importmap">
