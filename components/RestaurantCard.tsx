@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Restaurant } from '../types';
-import { getGoogleSearchLink, getGoogleMapsLink } from '../services/geminiService';
+import { Restaurant } from '../types.ts';
+import { getGoogleSearchLink, getGoogleMapsLink } from '../services/geminiService.ts';
 
 interface Props {
   restaurant: Restaurant;
@@ -48,7 +48,7 @@ const RestaurantCard: React.FC<Props> = ({ restaurant }) => {
 
             {/* Detailed Menu List (5 items) */}
             <div className="grid grid-cols-1 gap-4 mb-2">
-              <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Kim's Selection</div>
+              <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Kim's Selection (메뉴 및 설명)</div>
               <div className="space-y-3">
                 {restaurant.menus.map((menu, i) => (
                   <div key={i} className="group/menu border-b border-slate-100 pb-2 last:border-0">
@@ -73,7 +73,7 @@ const RestaurantCard: React.FC<Props> = ({ restaurant }) => {
           {/* Quick Actions */}
           <div className="flex md:flex-col gap-2 w-full md:w-24 flex-shrink-0 mt-2 md:mt-0">
             <a
-              href={getGoogleSearchLink(restaurant.name_en, restaurant.menus[0]?.name)}
+              href={getGoogleSearchLink(restaurant.name_en, "restaurant food")}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex flex-col items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-lg transition-all group/btn border border-slate-200"

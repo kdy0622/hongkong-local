@@ -16,7 +16,7 @@ const LOADING_MESSAGES = [
   "김반장이 로컬 정보를 확인 중입니다...",
   "실시간 리뷰를 필터링하고 있어요.",
   "2025년 최신 가격표 체크 중...",
-  "진짜 숨은 맛집 10곳을 골라내는 중입니다."
+  "진짜 숨은 맛집들을 골라내는 중입니다."
 ];
 
 const App: React.FC = () => {
@@ -45,7 +45,8 @@ const App: React.FC = () => {
       const result = await fetchHongKongGuide(query);
       setState(prev => ({ ...prev, loading: false, data: result }));
     } catch (err: any) {
-      setState(prev => ({ ...prev, loading: false, error: "정보를 가져오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요." }));
+      console.error(err);
+      setState(prev => ({ ...prev, loading: false, error: err.message || "오류가 발생했습니다." }));
     }
   };
 
@@ -57,7 +58,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20 overflow-x-hidden">
-      {/* Header Section */}
       <header className="relative pt-16 pb-12 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1506351421178-63b52a2d25a2?q=80&w=2000')] bg-cover bg-center opacity-10 blur-[2px] animate-pulse-slow"></div>
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col md:flex-row items-end justify-between gap-6">
@@ -97,18 +97,22 @@ const App: React.FC = () => {
         )}
 
         {state.error && (
-          <div className="bg-red-50 border border-red-100 p-8 rounded-2xl text-center">
-             <i className="fas fa-exclamation-circle text-red-500 text-3xl mb-4"></i>
-             <p className="text-slate-800 font-bold">{state.error}</p>
-             <button onClick={() => setState(prev => ({...prev, error: null}))} className="mt-4 text-xs font-bold text-red-600 underline">다시 시도</button>
+          <div className="bg-red-50 border border-red-100 p-8 rounded-2xl text-center my-10">
+             <i className="fas fa-exclamation-triangle text-red-500 text-3xl mb-4"></i>
+             <p className="text-slate-800 font-bold mb-2">{state.error}</p>
+             <p className="text-xs text-slate-400 mb-6">시스템 부하 혹은 API 일시 오류일 수 있습니다.</p>
+             <button 
+              onClick={() => performSearch(state.searchQuery)} 
+              className="bg-red-600 text-white px-6 py-2 rounded-full text-xs font-bold hover:bg-red-700 transition-all shadow-md"
+             >
+               다시 시도하기
+             </button>
           </div>
         )}
 
         {state.data && !state.loading && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-in slide-in-from-bottom-6 duration-700">
-            {/* Sidebar with Greeting and Tips */}
             <div className="lg:col-span-4 lg:sticky lg:top-10 h-fit space-y-8">
-              {/* Kim Ban-jang Card */}
               <div className="relative bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-xl shadow-lg text-white">
@@ -124,7 +128,6 @@ const App: React.FC = () => {
                 </p>
               </div>
 
-              {/* Local Tips Section */}
               <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl">
                 <h3 className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-4 flex items-center">
                   <i className="fas fa-lightbulb mr-2"></i> 김반장의 현지 팁
@@ -139,7 +142,6 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Dessert & Attractions */}
               <div className="space-y-6">
                 <div>
                    <h3 className="text-[11px] font-black text-pink-600 uppercase tracking-widest mb-4 border-b border-pink-100 pb-2">추천 디저트</h3>
@@ -170,11 +172,10 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Main Listings - Top 10 Restaurants */}
             <div className="lg:col-span-8">
               <div className="mb-8 flex items-center justify-between border-b border-slate-100 pb-4">
                  <h2 className="text-lg font-black text-slate-900 uppercase tracking-tighter">
-                   KIM'S <span className="text-red-600">BEST VALUE 10</span>
+                   KIM'S <span className="text-red-600">BEST VALUE SELECTION</span>
                  </h2>
                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">2025 VERIFIED</span>
               </div>
