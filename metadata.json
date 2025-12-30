@@ -1,0 +1,7 @@
+{
+  "name": "홍콩 김반장 - 베테랑 현지 가이드",
+  "description": "20년 경력의 홍콩 김반장이 추천하는 현지 맛집, 카페, 관광 명소 가이드입니다. 실시간 구글 검색을 통해 검증된 정보를 제공합니다.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
