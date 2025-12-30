@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { AppState, GuideResponse } from './types';
-import { fetchHongKongGuide, getGoogleSearchLink, getGoogleMapsLink } from './services/geminiService';
-import RestaurantCard from './components/RestaurantCard';
+import { AppState, GuideResponse } from './types.ts';
+import { fetchHongKongGuide, getGoogleSearchLink, getGoogleMapsLink } from './services/geminiService.ts';
+import RestaurantCard from './components/RestaurantCard.tsx';
 
 const PRESET_AREAS = [
   { name: "침사추이", en: "Tsim Sha Tsui", desc: "딤섬과 야경의 가성비 조화" },
@@ -45,7 +45,7 @@ const App: React.FC = () => {
       const result = await fetchHongKongGuide(query);
       setState(prev => ({ ...prev, loading: false, data: result }));
     } catch (err: any) {
-      setState(prev => ({ ...prev, loading: false, error: "정보를 가져오는 중 오류가 발생했습니다." }));
+      setState(prev => ({ ...prev, loading: false, error: "정보를 가져오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요." }));
     }
   };
 
@@ -100,6 +100,7 @@ const App: React.FC = () => {
           <div className="bg-red-50 border border-red-100 p-8 rounded-2xl text-center">
              <i className="fas fa-exclamation-circle text-red-500 text-3xl mb-4"></i>
              <p className="text-slate-800 font-bold">{state.error}</p>
+             <button onClick={() => setState(prev => ({...prev, error: null}))} className="mt-4 text-xs font-bold text-red-600 underline">다시 시도</button>
           </div>
         )}
 
@@ -138,10 +139,10 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Dessert & Attractions (Mobile order priority) */}
+              {/* Dessert & Attractions */}
               <div className="space-y-6">
                 <div>
-                   <h3 className="text-[11px] font-black text-pink-600 uppercase tracking-widest mb-4 border-b border-pink-100 pb-2">추천 디저트 (3곳)</h3>
+                   <h3 className="text-[11px] font-black text-pink-600 uppercase tracking-widest mb-4 border-b border-pink-100 pb-2">추천 디저트</h3>
                    {state.data.desserts.map((d, i) => (
                      <div key={i} className="mb-3 bg-white p-3 rounded-lg border border-slate-100 shadow-sm hover:border-pink-200 transition-colors">
                         <div className="text-xs font-bold text-slate-800 mb-0.5">{d.name}</div>
@@ -154,11 +155,11 @@ const App: React.FC = () => {
                    ))}
                 </div>
                 <div>
-                   <h3 className="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-4 border-b border-blue-100 pb-2">인근 명소 (3곳)</h3>
+                   <h3 className="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-4 border-b border-blue-100 pb-2">인근 명소</h3>
                    {state.data.attractions.map((a, i) => (
                      <div key={i} className="mb-3 bg-white p-3 rounded-lg border border-slate-100 shadow-sm hover:border-blue-200 transition-colors">
                         <div className="text-xs font-bold text-slate-800 mb-0.5">{a.name}</div>
-                        <p className="text-[10px] text-slate-400 mb-2 leading-tight line-clamp-2">{a.reason}</p>
+                        <p className="text-[10px] text-slate-400 mb-2 leading-tight">{a.reason}</p>
                         <div className="flex gap-2">
                            <a href={getGoogleSearchLink(a.name)} target="_blank" className="text-[9px] font-black text-slate-400 hover:text-red-600 uppercase transition-colors">📸 사진</a>
                            <a href={getGoogleMapsLink(a.name)} target="_blank" className="text-[9px] font-black text-slate-400 hover:text-red-600 uppercase transition-colors">📍 지도</a>
