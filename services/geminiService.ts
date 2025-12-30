@@ -2,12 +2,18 @@
 import { GoogleGenAI } from "@google/genai";
 import { GuideResponse } from "../types.ts";
 
-export const fetchHongKongGuide = async (location: string): Promise<GuideResponse> => {
+/**
+ * @param location 지역명
+ * @param startRank 시작 순위 (기본 1)
+ * @param count 가져올 개수 (기본 5)
+ */
+export const fetchHongKongGuide = async (location: string, startRank: number = 1, count: number = 5): Promise<GuideResponse> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
-  // 10개 식당은 토큰 및 제약 조건 초과 위험이 있어 최우수 7곳으로 조정하여 안정성 확보
+  // 범위를 지정하여 데이터 크기를 줄임으로써 시스템 부하(토큰/제약조건 초과) 방지
   const prompt = `
-    당신은 20년 경력의 홍콩 가이드 '김반장'입니다. "${location}" 지역의 최신 미식 정보를 제공하세요.
+    당신은 20년 경력의 홍콩 가이드 '김반장'입니다. "${location}" 지역의 정보를 제공하세요.
+    이번에는 맛집 순위 **${startRank}위부터 ${startRank + count - 1}위까지** 총 ${count}곳만 집중적으로 알려주세요.
     
     반드시 다음 JSON 구조를 지켜서 응답하세요:
     {
@@ -15,12 +21,12 @@ export const fetchHongKongGuide = async (location: string): Promise<GuideRespons
       "area_intro": "이 동네는...",
       "restaurants": [
         {
-          "rank": 1,
+          "rank": ${startRank},
           "name_ko": "식당 한글명",
           "name_en": "Restaurant English Name",
           "rating": 4.5,
           "review_count": 1200,
-          "recommendation_reason": "여기는 이래서 추천해요...",
+          "recommendation_reason": "추천 이유...",
           "menu_strings": [
             "영문메뉴명 | 한글메뉴명 | 설명 | 가격(숫자만)"
           ]
@@ -32,9 +38,9 @@ export const fetchHongKongGuide = async (location: string): Promise<GuideRespons
     }
 
     규칙:
-    1. 식당은 정확히 7곳을 추천하세요.
-    2. 모든 설명은 가이드 말투(해요체)로 작성하세요.
-    3. menu_strings는 반드시 "영문명 | 한글명 | 한글설명 | 가격" 형식을 지키세요.
+    1. 식당은 요청한 순위 범위에 맞춰 정확히 ${count}곳을 추천하세요.
+    2. menu_strings는 "영문명 | 한글명 | 한글설명 | 가격" 형식을 엄수하세요.
+    3. 모든 설명은 친절한 한국어 가이드 말투(해요체)로 작성하세요.
     4. 가격은 HKD 기준 숫자만 적으세요.
   `;
 
@@ -53,17 +59,11 @@ export const fetchHongKongGuide = async (location: string): Promise<GuideRespons
 
     const rawData = JSON.parse(response.text.trim());
     
-    // 데이터 보정 및 형식 변환
     const formattedData: GuideResponse = {
-      greeting: rawData.greeting || "반가워요! 홍콩 김반장입니다.",
-      area_intro: rawData.area_intro || "홍콩의 매력이 가득한 곳이죠.",
+      greeting: rawData.greeting || "반가워요!",
+      area_intro: rawData.area_intro || "홍콩의 매력적인 지역입니다.",
       restaurants: (rawData.restaurants || []).map((res: any) => ({
-        rank: res.rank,
-        name_ko: res.name_ko,
-        name_en: res.name_en,
-        rating: res.rating || 0,
-        review_count: res.review_count || 0,
-        recommendation_reason: res.recommendation_reason || "김반장이 강추하는 곳입니다.",
+        ...res,
         menus: (res.menu_strings || []).map((str: string) => {
           const [en, ko, desc, price] = str.split('|').map(s => s.trim());
           return {
@@ -75,7 +75,7 @@ export const fetchHongKongGuide = async (location: string): Promise<GuideRespons
       })),
       desserts: rawData.desserts || [],
       attractions: rawData.attractions || [],
-      tips: rawData.tips || ["현지 상황에 따라 현금을 준비하세요!", "합석 문화가 있으니 당황하지 마세요."]
+      tips: rawData.tips || []
     };
 
     return formattedData;
